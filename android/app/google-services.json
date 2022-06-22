@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "434051192528",
+    "project_id": "pagarapplication",
+    "storage_bucket": "pagarapplication.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:434051192528:android:da7906605cdb252b61f0d5",
+        "android_client_info": {
+          "package_name": "com.example.pagar_app_poc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "434051192528-0qjr186ginsqofm4cplatucbrgqdrrut.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pagar_app_poc",
+            "certificate_hash": "9669f8199cb4016774ab0dafb98f5cad9f0265b4"
+          }
+        },
+        {
+          "client_id": "434051192528-4dd4cqh99s9o7n8854jiid927ghkeabs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCbGeXMnkoJFKb5W-Kb4vP7O3XLmetfTWg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "434051192528-4dd4cqh99s9o7n8854jiid927ghkeabs.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "434051192528-g3s5tk2osr1c8bcd4atcjio50nukgg4r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pagarAppPoc"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
