@@ -23,41 +23,44 @@ class EmpBloc extends Bloc<UserEvent,UserState>{
 
 EmpBloc():super(UserLoading()){
   on<UserLoadEvent>((event, emit) => emit(UserLoading()));
-    on<UserSuccessEvent>((event, emit) => emit(UserSuccess(event.list)));
+    on<UserSuccessEvent>((event, emit) => emit(UserSuccess(event.list,event.attendance)));
     on<UserErrorEvent>((event, emit) => emit(UserError(event.error)));
+    // on<ChangeAttendenceEvent>((event,emit)=> emit(ChangeAttendenceSuccess(event.attendance)));
 }
+attend(list,attendence){
 
+  add(UserSuccessEvent( list,attendence));
+}
 
   fetchUser() async {
     add(UserLoadEvent());
     List<Employees> result = (await _service.retrieveUserData());
-//     print("in bloc");
-//     print(result);
-//     print("in bloc");
-// print(UserSuccess);
-    add(UserSuccessEvent(result));
-   // print(UserSuccessEvent(result));
+
+    add(UserSuccessEvent(result,{}));
 
 
   }
   updateUser(docId,id, Name, email, mobile, DOB, experience, gender)async{
     add(UserLoadEvent());
-Future<dynamic> result = await _service.updateUser(docId,id, Name, email, mobile, DOB, experience, gender);
-print(gender);
-    print("BLOC");
-    print(gender);
+dynamic result = await _service.updateUser(docId,id, Name, email, mobile, DOB, experience, gender);
 
 fetchUser();
   }
+  AddUser( Name, email, mobile, DOB, experience, gender,id,attendence)async{
+    add(UserLoadEvent());
+    dynamic result = await _service.addUser( Name, email, mobile, DOB, experience, gender,id,attendence);
+
+    //fetchUser();
+  }
+
   updateAttendence(docId,attendence)async{
     add(UserLoadEvent());
     Future<dynamic> result = await _service.updateAttendence(docId,attendence);
-    print(attendence);
-    print("BLOC");
-    print(attendence);
 
-    fetchUser();
+
+    //fetchUser();
   }
+
  }
 //  fetchEmp() async {
 //     add(UserLoadEvent());

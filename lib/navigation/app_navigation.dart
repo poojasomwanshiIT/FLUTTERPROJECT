@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pagar_app_poc/view/employeeDetails.dart';
 import 'package:pagar_app_poc/view/login.dart';
 import 'package:pagar_app_poc/view/home.dart';
 import 'package:pagar_app_poc/view/addEmployee.dart';
@@ -6,6 +7,8 @@ class AppNavigator {
   static const defaultRoute = "/login";
   static const homeRoute = "/home";
   static const addEmpRoute = "/add";
+  static const updateEmpRoute="/update";
+  static const updateEmpsRoute="/updateemp";
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     dynamic args = settings.arguments;
@@ -18,7 +21,18 @@ class AppNavigator {
         return MaterialPageRoute(
           builder: (_) => LoginScreen(),
         );
-
+      case addEmpRoute:
+        return MaterialPageRoute(
+          builder: (_) => AddEmp(isEditon: args),
+        );
+      case updateEmpRoute:
+        return MaterialPageRoute(
+          builder: (_) => EmployeeDetails(args),
+        );
+      case updateEmpsRoute:
+        return MaterialPageRoute(
+          builder: (_) => AddEmp(isEditon: args['flag'],emp: args['data'],),
+        );
       default:
         return _errorRoute();
     }

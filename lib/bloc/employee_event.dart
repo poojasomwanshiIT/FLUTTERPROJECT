@@ -13,16 +13,24 @@ class UserLoadEvent extends UserEvent{
 
 class UserSuccessEvent extends UserEvent {
   List<Employees> list;
-  UserSuccessEvent(this.list);
+  Map<String, String> attendance;
+
+  UserSuccessEvent(this.list,this.attendance);
 
   // late QuerySnapshot<Map<String, Employees>> list;
   // UserSuccessEvent(this.list);
   @override
   // TODO: implement props
-  List<Object?> get props => [list];
+  List<Object?> get props => [list,attendance];
 }
 class UserErrorEvent extends UserEvent{
   dynamic error;
   UserErrorEvent(this.error);
+
+}
+class ChangeAttendenceEvent extends UserEvent{
+
+   Map<String, String> attendance;
+    ChangeAttendenceEvent(this.attendance);
 
 }

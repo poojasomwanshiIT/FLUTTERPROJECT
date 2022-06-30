@@ -4,23 +4,22 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pagar_app_poc/bloc/employee_event.dart';
-import 'package:pagar_app_poc/splash/splash.dart';
 import 'package:pagar_app_poc/view/home.dart';
 import 'package:pagar_app_poc/view/login.dart';
-import 'package:splashscreen/splashscreen.dart';
 import 'firebase_options.dart';
-import 'model/emp_model.dart';
+import 'navigation/app_navigation.dart';
 import 'view/login.dart';
 import 'package:pagar_app_poc/bloc/employee_bloc.dart';
-import 'package:pagar_app_poc/service/emp_service.dart';
-import 'package:pagar_app_poc/model/emp_model.dart';
+import 'package:splashscreen/splashscreen.dart';
 import 'di_container.dart' as di;
+
 
 void main() async{
   await di.init();
 
   WidgetsFlutterBinding.ensureInitialized();
+  //WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+ // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -28,7 +27,6 @@ void main() async{
   runApp(
       const MyApp());
 }
-
 
 
 class MyApp extends StatefulWidget {
@@ -50,6 +48,7 @@ class _MyAppState extends State<MyApp> {
         print('User is signed in!');
       }
     });
+
   }
 
   @override
@@ -71,24 +70,25 @@ class _MyAppState extends State<MyApp> {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
+        onGenerateRoute: AppNavigator.generateRoute,
 
-         home:  SplashScreen(
-           seconds: 5,
-           navigateAfterSeconds:  users!=null ? Home() : LoginScreen(),
+         home: SplashScreen(
+                   seconds: 5,
+                   navigateAfterSeconds:  users!=null ? Home() : LoginScreen(),
 
-           title: const Text(
-             'Pagar Application',
-             style: TextStyle(
-                 fontWeight: FontWeight.bold,
-                 fontSize: 20.0,
-                 color: Colors.white),
-           ),
-           image: Image.asset('assets/images/user.png'),
-           photoSize: 100.0,
-           backgroundColor: Colors.blue,
+                   title: const Text(
+                     'Pagar Application',
+                     style: TextStyle(
+                         fontWeight: FontWeight.bold,
+                         fontSize: 20.0,
+                         color: Colors.white),
+                   ),
+                   image: Image.asset('assets/images/user.png'),
+                   photoSize: 100.0,
+                   backgroundColor: Colors.blue,
 
 
-         ),
+                 ),
       ),);
   }
 

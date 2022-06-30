@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:pagar_app_poc/model/emp_model.dart';
@@ -16,35 +17,43 @@ class EmployeeDetails extends StatefulWidget {
   _EmployeeDetailsState createState() => _EmployeeDetailsState();
 }
 
-final nameController = TextEditingController();
-final mobileController = TextEditingController();
-final emailController = TextEditingController();
-final dobController = TextEditingController();
-final experienceController = TextEditingController();
-
-final genderController = TextEditingController();
-
-final empidController = TextEditingController();
 String? empDob;
 
 class _EmployeeDetailsState extends State<EmployeeDetails> {
-  EmpBloc? userBloc;
+  final nameController = TextEditingController();
+  final mobileController = TextEditingController();
+  final emailController = TextEditingController();
+  final dobController = TextEditingController();
+  final experienceController = TextEditingController();
 
+  final genderController = TextEditingController();
+
+  final empidController = TextEditingController();
+  EmpBloc? userBloc;
+@override
+  void initState() {
+    // TODO: implement initState
+  nameController.text = widget.emp.Name;
+  emailController.text = widget.emp.email;
+  mobileController.text=widget.emp.mobile;
+  dobController.text=widget.emp.DOB;
+  experienceController.text=widget.emp.experience;
+  genderController.text=widget.emp.gender;
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     userBloc = context.read<EmpBloc>();
     userBloc?.fetchUser();
-    nameController.text = widget.emp.Name;
-    emailController.text = widget.emp.email;
-    mobileController.text=widget.emp.mobile;
-    dobController.text=widget.emp.DOB;
-    experienceController.text=widget.emp.experience;
-genderController.text=widget.emp.gender;
+    final _formsKey = GlobalKey<FormState>();
+
     String? gender = genderController.text;
     return Scaffold(
       appBar: Header('Edit Employee '),
       body:SingleChildScrollView(
      child:   Form(
+         autovalidateMode: AutovalidateMode.onUserInteraction,
+         key: _formsKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
@@ -61,8 +70,9 @@ genderController.text=widget.emp.gender;
                       return "Enter min. 3 and max 120 characters";
                     }
                     else{
-                      return null;
+
                     }
+
                   },
 
                   decoration: const InputDecoration(
@@ -96,7 +106,7 @@ genderController.text=widget.emp.gender;
                       if(value != null && value.isEmpty ){
                         return "This field is required";
                       }
-                      if (!RegExp(r'\S+@\S+\.\S+').hasMatch(value!)) {
+                      if (!RegExp('[a-z0-9]+@[a-z]+\.[a-z]{2,3}').hasMatch(value!)) {
                         return "Please enter a valid email address";
                       }
                     },
@@ -135,6 +145,8 @@ genderController.text=widget.emp.gender;
                     },                    controller: mobileController,
 
                     keyboardType: TextInputType.phone,
+                    maxLength: 10,
+
                   ),
                 ),
                 Container(
@@ -180,6 +192,7 @@ genderController.text=widget.emp.gender;
                       left: 30.0,  right: 30.0, bottom: 10.0,top: 10),
                   child: TextFormField(
                     decoration: const InputDecoration(
+
                       // border: OutlineInputBorder(
                       //     borderRadius: BorderRadius.circular(5)),
                       hintText: 'Enter your experience in years',
@@ -197,33 +210,57 @@ genderController.text=widget.emp.gender;
 
                     controller: experienceController,
 
+                    keyboardType: TextInputType.number,
+inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+
                   ),
                 ),
                 const Padding(
                     padding: EdgeInsets.only(top: 20),
                ),
-                ElevatedButton(onPressed: (){
-                  print(widget.emp.docId,
-                  );
-                  print("onpress");
-                  setState(() {
-                    dobController.text=empDob!;
-                  });
-                  print(widget.emp.docId,
-                  );
-                  print(widget.emp.docId,
-                  );
-                  userBloc?.updateUser(
-                    widget.emp.docId,
+                ElevatedButton(onPressed: ()async{
+                  final isValidForm=_formsKey.currentState!.validate();
+
+                  // print(widget.emp.docId,
+                  // );
+                  // print("onpress");
+                  // setState(() {
+                  //   dobController.text=empDob!;
+                  // });
+                  // print(widget.emp.docId,
+                  // );
+                  // print(widget.emp.docId,
+                  // );
+                  if(nameController.text=='' || experienceController.text==''|| emailController.text=='' || mobileController.text.isEmpty){
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AlertDialog(
+                            title: Text("Edit Failed!"),
+                            titleTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.red,
+                                fontSize: 15),
+                            content: Text("Please enter valid details"),
+                          );
+                        });
+                  }if(isValidForm){
+
+                    userBloc?.updateUser(
+                      widget.emp.docId,
                       widget.emp.id,
-                    nameController.text,
-                    emailController.text,
-                    mobileController.text,
-                    dobController.text,
-                    experienceController.text,
-                    genderController.text,
-                  );
-                  Navigator.of(context,rootNavigator: true).pop(context,);
+                      nameController.text.trim(),
+                      emailController.text,
+                      mobileController.text,
+                      dobController.text,
+                      experienceController.text,
+                      genderController.text,
+                    );
+                    Navigator.of(context,rootNavigator: true).pop(context,);
+                  }
+
+
+
 
 
                 },

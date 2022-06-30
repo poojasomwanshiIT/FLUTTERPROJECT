@@ -4,7 +4,7 @@ import 'package:pagar_app_poc/view/login.dart';
 
 import '../navigation/app_navigation.dart';
 import '../view/home.dart';
-import '../view/logout.dart';
+
 
 class Header extends StatelessWidget implements PreferredSizeWidget {
   String? title;
@@ -61,10 +61,7 @@ class Header extends StatelessWidget implements PreferredSizeWidget {
                                 child: const Text("Yes")),
                             ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Home()));
+                              Navigator.of(context).pop();
                                 },
                                 child: const Text("No")),
                           ],

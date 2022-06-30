@@ -14,38 +14,36 @@ import 'employeeDetails.dart';
 class Home extends StatefulWidget {
   Home({Key? key}) : super(key: key);
   CollectionReference users =
-  FirebaseFirestore.instance.collection('Employees');
+      FirebaseFirestore.instance.collection('Employees');
 
   @override
   _HomeState createState() => _HomeState();
 }
 
-enum empattendence { present, absent, firstHalf, secondHalf }
-
 EmpBloc? userBloc;
 
 class _HomeState extends State<Home> {
   CollectionReference users =
-  FirebaseFirestore.instance.collection('Employees');
-  final empattendenceController = TextEditingController();
+      FirebaseFirestore.instance.collection('Employees');
 
-  List<dynamic> tempList = [];
-  List<Map> studentList = [];
+  late var empattendenceController = TextEditingController();
+
+  late final int index;
 
   //Create attendance list to hold attendance
-  Map<String, String> attendance = {};
-  List<String> labels = ['Present', 'Absent', 'firstHalf', 'secondHalf'];
-  bool isAttendencedone = false;
-  empattendence? _empattendence = empattendence.present;
+  List<Map> empList = [];
 
-//list var
+  List<String> labels = ['Present', 'Absent', 'firstHalf', 'secondHalf'];
+
+  bool isAttendencedone = false;
+bool isEditon=true;
   String? colorText;
   Color _bgColor = Colors.blue;
+  String? attId;
 
   @override
   void initState() {
-    //refresh the page here
-
+    // TODO: implement initState
     super.initState();
   }
 
@@ -58,8 +56,11 @@ class _HomeState extends State<Home> {
       body: SafeArea(
           child: Container(
               color: Colors.white,
-
-              child: BlocBuilder<EmpBloc, UserState>(builder: (context, state) {
+              child: BlocBuilder<EmpBloc, UserState>(
+                  buildWhen: (previousState, state) {
+                previousState != state && state is UserLoading;
+                return true;
+              }, builder: (context, state) {
                 if (state is UserLoading) {
                   return const Center(
                     child: CircularProgressIndicator(
@@ -67,16 +68,21 @@ class _HomeState extends State<Home> {
                     ),
                   );
                 }
-
-                if (state is UserSuccess) {
-                  if (state.list.isEmpty) {
+                if (state is UserError) {
+                  return Text(state.error);
+                  //  print(state.error);
+                } else {
+                  if ((state as UserSuccess).list.isEmpty) {
                     return Column(children: [
                       Center(
-                        child: Image.asset(
-                          'assets/images/folder.png',
-                          height: 100,
-                          width: 100,
-                        ),
+                        child: Padding(padding: const EdgeInsets.only(top: 250),
+                          child: Image.asset(
+                            'assets/images/folder.png',
+                            height: 100,
+                            width: 100,
+                          ),
+
+                        )
                       )
                     ]);
                   } else {
@@ -84,89 +90,110 @@ class _HomeState extends State<Home> {
                       child: ListView.builder(
                         itemCount: state.list.length,
                         itemBuilder: (BuildContext context, int index) {
+                          empList.add({'id': state.list[index].docId});
+
                           colorText = state.list[index].attendence;
+                          userBloc?.attend(state.list, state.attendance);
+
                           if (state.list[index].attendence == '') {
                             isAttendencedone = true;
                           } else {
                             isAttendencedone = false;
                           }
                           return Card(
-                            
                               child: GestureDetector(
                                   onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                EmployeeDetails(
-                                                    (state.list[index]))));
+                                    // Navigator.push(
+                                    //     context,
+                                    //     MaterialPageRoute(
+                                    //         builder: (context) =>
+                                    //             EmployeeDetails(
+                                    //                 (state.list[index]))));
+                                    AppNavigator.push(
+                                        context: context,
+                                        routeName: AppNavigator.updateEmpsRoute,
+                                        argument: {'flag':true,'data':(state).list[index]});
                                   },
                                   child: Column(
                                     children: [
-                                      Padding(padding: EdgeInsets.only(top: 10)),
+                                      const Padding(
+                                          padding: EdgeInsets.only(top: 10)),
                                       ListTile(
                                         title: Text(state.list[index].Name),
                                         subtitle: Text(state.list[index].email),
-                                        trailing:
-                                        Text(state.list[index].attendence,
+                                        trailing: Text(
+                                          state.list[index].attendence,
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
-                                            color:getTextclr(state.list[index].attendence),
-
-                                          ),),
+                                            color: getTextclr(
+                                                state.list[index].attendence),
+                                          ),
+                                        ),
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Visibility(
-                                          visible: isAttendencedone,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                            children: labels.map((s) {
-                                              return Column(
-                                                children: <Widget>[
-                                                  Radio(
-                                                    groupValue: attendance[state
-                                                        .list[index].docId],
-                                                    value: s,
-                                                    onChanged:
-                                                        (String? newValue) {
-                                                      setState(() {
-                                                        attendance[state
-                                                            .list[index]
-                                                            .docId!] =
-                                                        newValue!;
-                                                        print(attendance);
-                                                      });
-                                                    },
-                                                  ),
-                                                  Text(s,
-                                                      style: const TextStyle(
-                                                          color: Colors.black))
-                                                ],
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
+                                            visible: isAttendencedone,
+                                            child: InkWell(
+                                              onTap: () {},
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: labels.map((s) {
+                                                  return Column(
+                                                    children: <Widget>[
+                                                      Radio(
+                                                        groupValue:
+                                                            (state).attendance[
+                                                                (state)
+                                                                    .list[index]
+                                                                    .docId!],
+                                                        value: s,
+                                                        onChanged:
+                                                            (String? newValue) {
+                                                          (state).attendance[
+                                                                  (state)
+                                                                      .list[index]
+                                                                      .docId!] =
+                                                              newValue!;
+                                                          userBloc?.attend(
+                                                              state.list,
+                                                              state.attendance);
+                                                        },
+                                                      ),
+                                                      Text(s,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .black))
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              ),
+                                            )),
                                       ),
-                                      Padding(padding: EdgeInsets.only(top: 10))
+                                      const Padding(padding: EdgeInsets.only(top: 10))
                                     ],
                                   )));
                         },
                       ),
                     );
                   }
-                } else {
-                  return Text("something went wrong");
                 }
               }))),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AddEmp()));
+          // Navigator.push(
+          //     context, MaterialPageRoute(builder: (context) => AddEmp()));
+          AppNavigator.push(
+            context: context,
+            routeName: AppNavigator.addEmpRoute,
+            argument: false,
+          );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         //label: const Text('Add Employees'),
         backgroundColor: Colors.green,
 
@@ -178,18 +205,38 @@ class _HomeState extends State<Home> {
           onTap: () async {
             print('called on tap');
 
-            print(attendance);
+            if ((userBloc?.state as UserSuccess).attendance.isEmpty) {
+              return showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return const AlertDialog(
+                      title: Text("Failed"),
+                      titleTextStyle: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red,
+                          fontSize: 20),
+                      content: Text("Please Select Employee's Attendence"),
+                    );
+                  });
+            } else {
+              (userBloc?.state as UserSuccess)
+                  .attendance
+                  .forEach((key, value) async {
+                await userBloc?.updateAttendence(key, value);
+              });
+              AppNavigator.push(
+                context: context,
+                routeName: AppNavigator.homeRoute,
+              );
+              // (userBloc?.state as UserSuccess).attendance.forEach((key, value) async {
+              //   await users.doc(key)
+              //       .update({'attendence': value})
+              //       .then((value) => print("User Updated"))
+              //       .catchError((error) =>
+              //       print("Failed to update user: $error"));
+              // });
+            }
 
-            attendance.forEach((key, value) async {
-              await userBloc?.updateAttendence(key, value);
-            });
-            // attendance.forEach((key, value) async {
-            //   await users.doc(key)
-            //       .update({'attendence': value})
-            //       .then((value) => print("User Updated"))
-            //       .catchError((error) =>
-            //       print("Failed to update user: $error"));
-            // });
           },
           child: const SizedBox(
             height: kToolbarHeight,
@@ -199,7 +246,7 @@ class _HomeState extends State<Home> {
                 'Mark Attendence',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  // color: Colors.white10,
+                   color: Colors.white,
                 ),
               ),
             ),
@@ -227,14 +274,36 @@ class _HomeState extends State<Home> {
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut();
   }
-// Future<void> updateUser() {
-//   return users
-//       .doc()
-//       .update({'company': 'Stokes and Sons'})
-//       .then((value) => print("User Updated"))
-//       .catchError((error) => print("Failed to update user: $error"));
-// }
+
+
 }
+
+// labels.map((s) {
+// return Column(
+//
+// children:<Widget> [
+// Radio(
+// groupValue: attendance[state.list[index].docId],
+// value: s,
+// onChanged:(String? newValue) {
+// print("onchange");
+// print(newValue);
+//
+// //  print(empattendenceController.text);
+// //    empattendenceController.text=newValue!;
+// // attendance[state.list[index].docId!]=newValue!;
+// setState(() {
+// attendance[state.list[index].docId!]=newValue!;
+// print(attendance);
+// });
+// },                    activeColor: Colors.deepPurpleAccent,
+//
+// ),
+// Text(s,
+// style: const TextStyle(
+// color: Colors.black))
+// ],
+// ); }).toList(),
 
 // ElevatedButton(onPressed: (){
 //

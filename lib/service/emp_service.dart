@@ -33,9 +33,13 @@ class EmpService  {
     // List<Employees> result =_baseRepo.retrieveUserData();
     // print("in service");
     // print(_baseRepo.updateUser);
-    print("in service");
-    print(gender);
+    // print("in service");
+    // print(gender);
     return _baseRepo.updateUser(docId,id, Name, email, mobile,DOB,experience,gender);
+  }
+  Future addUser( Name, email, mobile,DOB,experience,gender,id,attendence) {
+
+    return _baseRepo.addUser( Name, email, mobile,DOB,experience,gender,id,attendence);
   }
 
   Future updateAttendence(docId,attendence) {

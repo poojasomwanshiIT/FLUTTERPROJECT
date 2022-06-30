@@ -134,12 +134,18 @@ class _LoginScreenState extends State<LoginScreen> {
                           onCodeChanged: (String code) {
                             setState(() {
                               otpController.text = code;
+
                             });
                             //handle validation or checks here
                           },
                           //runs when every textfield is filled
                           onSubmit: (String verificationCode){
                             otpController.text = verificationCode;
+                            if(otpController.text==''){
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
                           }, // end onSubmit
                         ),
 
@@ -177,10 +183,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                           }
                           if (otpVisibility) {
-                            setState(() {
-                              _isLoading = false;
-                            });
                             verifyOTP();
+                            if(otpController.text!=''){
+                              setState(() {
+                                _isLoading = true;
+                              });
+                            }
                           }
                         },
                         child: Text(
@@ -217,7 +225,9 @@ class _LoginScreenState extends State<LoginScreen> {
       codeSent: (String verificationId, int? resendToken) {
         otpVisibility = true;
         verificationID = verificationId;
-
+        setState(() {
+          _isLoading = false;
+        });
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         setState(() {
@@ -235,21 +245,41 @@ class _LoginScreenState extends State<LoginScreen> {
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationID, smsCode: otpController.text);
 
+    if(otpController.text!=''){
+      setState(() {
+        _isLoading = true ;
+      });
+    }else{
+      setState(() {
+        _isLoading = false;
+      });
+    }
     await auth.signInWithCredential(credential).then(
       (value) {
         setState(() {
+          if(otpController.text!=''){
+            setState(() {
+              _isLoading = true;
+            });
+          }
+
           user = FirebaseAuth.instance.currentUser;
+
         });
       },
     ).whenComplete(
       () {
+
         if (user != null) {
+          setState(() {
+            _isLoading = true;
+          });
           Fluttertoast.showToast(
             msg: "You are logged in successfully",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
-            backgroundColor: Colors.red,
+            backgroundColor: Colors.green,
             textColor: Colors.white,
             fontSize: 16.0,
           );
@@ -258,9 +288,27 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute(builder: (context) => Home()),
                 (Route<dynamic> route) => false,
             );
-        } else {
+        } else if(otpController.text=='') {
+          setState(() {
+            _isLoading = false;
+          });
           Fluttertoast.showToast(
-            msg: "your login is failed",
+            msg: "Please enter otp",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }else{
+          setState(() {
+            _isLoading = false;
+          });
+
+          Fluttertoast.showToast(
+
+            msg: "login failed",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

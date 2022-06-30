@@ -47,8 +47,8 @@ import 'package:pagar_app_poc/model/emp_model.dart';
         .toList().cast<Employees>();
   }
 Future<dynamic>updateUser(docId,id, Name, email, mobile,DOB,experience,gender)async{
-     print("repo");
-     print(gender);
+     // print("repo");
+     // print(gender);
   return employeeCollection
       .doc(docId.toString().trim())
       .update({
@@ -64,6 +64,23 @@ Future<dynamic>updateUser(docId,id, Name, email, mobile,DOB,experience,gender)as
       // .catchError((error) => print("Failed to update user: $error"));
     // DocumentReference documentReference=employeeCollection.doc();
 }
+   Future<dynamic>addUser( Name, email, mobile,DOB,experience,gender,id,attendence)async{
+     // print("repo");
+     // print(gender);
+     return employeeCollection.add({
+       'Name':Name,
+       'email': email,
+       'mobile':mobile,
+       'DOB': DOB,
+       'experience': experience,
+       'gender': gender,
+       'empId':id ,
+       'attendence':'',
+     }).then((value) => print("user added"));
+     // .then((value) => print("User Updated"))
+     // .catchError((error) => print("Failed to update user: $error"));
+     // DocumentReference documentReference=employeeCollection.doc();
+   }
    Future<dynamic>updateAttendence(docId,attendence)async{
      print("repo");
      print(attendence);
