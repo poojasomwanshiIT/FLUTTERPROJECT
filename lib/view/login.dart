@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -96,10 +97,10 @@ class _LoginScreenState extends State<LoginScreen> {
           Container(
             margin: EdgeInsets.only(
                 top: MediaQuery.of(context).size.width * 0.7,
-                bottom: 10,
-                left: 15,
-                right: 15),
-            height: 230.0,
+
+                left: 25,
+                right: 25),
+            height: 200.0,
             width: MediaQuery.of(context).size.width,
             child: Card(
               color: Colors.white,
@@ -111,7 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      margin: EdgeInsets.only(left: 10, right: 10),
+                      margin: EdgeInsets.only(left: 20, right: 20,top: 10),
                       child: Visibility(
                         visible: !otpVisibility,
                         child: TextFormField(
@@ -138,9 +139,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(
-                      height: 30,
-                    ),
+                  Visibility(
+                    visible: otpVisibility,
+
+                    child:   const SizedBox(
+                    height: 80,
+                  ),),
                     _isLoading
                         ? const Center(
                             child: CircularProgressIndicator(
@@ -148,7 +152,15 @@ class _LoginScreenState extends State<LoginScreen> {
                             backgroundColor: Colors.white,
                           ))
                         : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
+                            style: !otpVisibility? ElevatedButton.styleFrom(
+                                //otpVisibility?  fixedSize: const Size(200, 50) :  fixedSize: const Size(200, 50),
+                              fixedSize: const Size(120, 40),
+                              primary: Colors.blueAccent,
+                              textStyle: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold),
+
+                            ):ElevatedButton.styleFrom(
+                              //otpVisibility?  fixedSize: const Size(200, 50) :  fixedSize: const Size(200, 50),
                               fixedSize: const Size(200, 50),
                               primary: Colors.blueAccent,
                               textStyle: const TextStyle(
@@ -178,8 +190,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                                 fontSize: 20,
                               ),
+
                             ),
                           ),
+                    // const SizedBox(
+                    //   child: Padding(padding: EdgeInsets.only(bottom: 10)),
+                    // ),
                   ],
                 ),
               ),
@@ -191,7 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 10, bottom: 5,top: 20),
+                      padding: EdgeInsets.only(left: 10, bottom: 5,top: 25),
                       child: Image.asset(
                         'assets/images/security.png',
                         height: 100,
@@ -200,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const Padding(
                       padding: EdgeInsets.only(
-                        top: 30,
+                        top: 25,
                       ),
                       child: Text(
                         "Verification Code",
@@ -209,21 +225,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(top: 20),
+                      padding: EdgeInsets.only(top: 10),
                       child: Text(
                         "Enter 6 digit verification code sent on ",
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 10,),
                       child: Text(
                         "your mobile number ",
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(top: 20),
+                      padding: EdgeInsets.only(top: 30),
                     ),
                     OtpTextField(
                       numberOfFields: 6,
@@ -248,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }, // end onSubmit
                     ),
                     const Padding(
-                      padding: EdgeInsets.only(bottom: 20),
+                      padding: EdgeInsets.only(bottom: 10),
                     ),
                   ],
                 ),
@@ -274,184 +290,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
       )
 
-          // Container(
-          //   height: MediaQuery.of(context).size.height * 0.5,
-          //   width: MediaQuery.of(context).size.width,
-          //   margin: const EdgeInsets.all(10),
-          //   child:
-          //   Form(
-          //     autovalidateMode: AutovalidateMode.onUserInteraction,
-          //     key: _Key,
-          //     child: Column(
-          //       mainAxisAlignment: MainAxisAlignment.start,
-          //       children: [
-          //         Container(
-          //
-          //         ),
-          //
-          //         Visibility(
-          //           visible: !otpVisibility,
-          //           child: Padding(
-          //               padding: const EdgeInsets.only(top: 10.0),
-          //               child: Center(
-          //                 child: Image.asset(ImageResource.user,
-          //                     height: 130, width: 130),
-          //               )),
-          //         ),
-          //         Visibility(
-          //           visible: !otpVisibility,
-          //           child: const Padding(
-          //               padding: EdgeInsets.only(top: 10.0, bottom: 40),
-          //               child: Center(
-          //                 child: Text('Pagar Application ',
-          //                     style: TextStyle(
-          //                         color: Colors.deepPurple,
-          //                         fontSize: 25.0,
-          //                         fontWeight: FontWeight.bold)),
-          //               )),
-          //         ),
-          //         Visibility(
-          //           visible: !otpVisibility,
-          //           child: TextFormField(
-          //             controller: phoneController,
-          //             decoration: const InputDecoration(
-          //               hintText: 'Phone Number',
-          //               prefix: Padding(
-          //                 padding: EdgeInsets.all(4),
-          //                 child: Text('+91'),
-          //               ),
-          //             ),
-          //             maxLength: 10,
-          //             keyboardType: TextInputType.phone,
-          //             validator: (value) {
-          //               if (value != null && value.isEmpty) {
-          //                 return "This field is required";
-          //               }
-          //               if (value!.length < 10) {
-          //                 return "Please enter a 10 digit valid phone number";
-          //               }
-          //               return null;
-          //             },
-          //           ),
-          //         ),
-          //
-          //         Visibility(
-          //           child: Center(
-          //             child: Column(
-          //               children: [
-          //                 Padding(
-          //                   padding: EdgeInsets.only(left: 10, top: 20),
-          //                   child: Image.asset(
-          //                     'assets/images/security.png',
-          //                     height: 100,
-          //                     width: 100,
-          //                   ),
-          //                 ),
-          //                 const Padding(
-          //                   padding: EdgeInsets.only(
-          //                     top: 30,
-          //                   ),
-          //                   child: Text(
-          //                     "Verification Code",
-          //                     style: TextStyle(
-          //                         fontWeight: FontWeight.bold, fontSize: 22),
-          //                   ),
-          //                 ),
-          //                 const Padding(
-          //                   padding: EdgeInsets.only(top: 20),
-          //                   child: Text(
-          //                     "Enter 6 digit verification code sent on ",
-          //                     style: TextStyle(fontSize: 16),
-          //                   ),
-          //                 ),
-          //                 const Padding(
-          //                   padding: EdgeInsets.only(top: 10),
-          //                   child: Text(
-          //                     "your mobile number ",
-          //                     style: TextStyle(fontSize: 16),
-          //                   ),
-          //                 ),
-          //                 const Padding(
-          //                   padding: EdgeInsets.only(top: 20),
-          //                 ),
-          //                 OtpTextField(
-          //                   numberOfFields: 6,
-          //                   borderColor: Colors.black,
-          //                   //set to true to show as box or false to show as dash
-          //                   showFieldAsBox: true,
-          //                   //runs when a code is typed in
-          //                   onCodeChanged: (String code) {
-          //                     setState(() {
-          //                       otpController.text = code;
-          //
-          //                     });
-          //                     //handle validation or checks here
-          //                   },
-          //                   //runs when every textfield is filled
-          //                   onSubmit: (String verificationCode){
-          //                     otpController.text = verificationCode;
-          //                     if(otpController.text==''){
-          //                       setState(() {
-          //                         _isLoading = false;
-          //                       });
-          //                     }
-          //                   }, // end onSubmit
-          //                 ),
-          //
-          //                 const Padding(
-          //                   padding: EdgeInsets.only(bottom: 20),
-          //                 ),
-          //               ],
-          //             ),
-          //           ),
-          //           visible: otpVisibility,
-          //         ),
-          //         const SizedBox(
-          //           height: 30,
-          //         ),
-          //         _isLoading
-          //             ? const Center(
-          //             child: CircularProgressIndicator(
-          //               color: Colors.blue,
-          //               backgroundColor: Colors.white,
-          //             ))
-          //             : ElevatedButton(
-          //           style: ElevatedButton.styleFrom(
-          //             fixedSize: const Size(200, 50),
-          //             primary: Colors.blueAccent,
-          //             textStyle: const TextStyle(
-          //                 fontSize: 20, fontWeight: FontWeight.bold),
-          //           ),
-          //           onPressed: () {
-          //             final isValidForm = _Key.currentState!.validate();
-          //
-          //             if (isValidForm) {
-          //               loginWithPhone();
-          //               setState(() {
-          //                 _isLoading = true;
-          //               });
-          //             }
-          //             if (otpVisibility) {
-          //               verifyOTP();
-          //               if(otpController.text!=''){
-          //                 setState(() {
-          //                   _isLoading = true;
-          //                 });
-          //               }
-          //             }
-          //           },
-          //           child: Text(
-          //             otpVisibility ? "Verify" : "Login",
-          //             style: const TextStyle(
-          //               color: Colors.white,
-          //               fontSize: 20,
-          //             ),
-          //           ),
-          //         ),
-          //       ],
-          //     ),
-          //   ),
-          // )
+
           ),
     );
   }
@@ -827,3 +666,181 @@ class _LoginScreenState extends State<LoginScreen> {
 //                 //     ],
 //                 //   ),
 //                 // ),),
+// Container(
+//   height: MediaQuery.of(context).size.height * 0.5,
+//   width: MediaQuery.of(context).size.width,
+//   margin: const EdgeInsets.all(10),
+//   child:
+//   Form(
+//     autovalidateMode: AutovalidateMode.onUserInteraction,
+//     key: _Key,
+//     child: Column(
+//       mainAxisAlignment: MainAxisAlignment.start,
+//       children: [
+//         Container(
+//
+//         ),
+//
+//         Visibility(
+//           visible: !otpVisibility,
+//           child: Padding(
+//               padding: const EdgeInsets.only(top: 10.0),
+//               child: Center(
+//                 child: Image.asset(ImageResource.user,
+//                     height: 130, width: 130),
+//               )),
+//         ),
+//         Visibility(
+//           visible: !otpVisibility,
+//           child: const Padding(
+//               padding: EdgeInsets.only(top: 10.0, bottom: 40),
+//               child: Center(
+//                 child: Text('Pagar Application ',
+//                     style: TextStyle(
+//                         color: Colors.deepPurple,
+//                         fontSize: 25.0,
+//                         fontWeight: FontWeight.bold)),
+//               )),
+//         ),
+//         Visibility(
+//           visible: !otpVisibility,
+//           child: TextFormField(
+//             controller: phoneController,
+//             decoration: const InputDecoration(
+//               hintText: 'Phone Number',
+//               prefix: Padding(
+//                 padding: EdgeInsets.all(4),
+//                 child: Text('+91'),
+//               ),
+//             ),
+//             maxLength: 10,
+//             keyboardType: TextInputType.phone,
+//             validator: (value) {
+//               if (value != null && value.isEmpty) {
+//                 return "This field is required";
+//               }
+//               if (value!.length < 10) {
+//                 return "Please enter a 10 digit valid phone number";
+//               }
+//               return null;
+//             },
+//           ),
+//         ),
+//
+//         Visibility(
+//           child: Center(
+//             child: Column(
+//               children: [
+//                 Padding(
+//                   padding: EdgeInsets.only(left: 10, top: 20),
+//                   child: Image.asset(
+//                     'assets/images/security.png',
+//                     height: 100,
+//                     width: 100,
+//                   ),
+//                 ),
+//                 const Padding(
+//                   padding: EdgeInsets.only(
+//                     top: 30,
+//                   ),
+//                   child: Text(
+//                     "Verification Code",
+//                     style: TextStyle(
+//                         fontWeight: FontWeight.bold, fontSize: 22),
+//                   ),
+//                 ),
+//                 const Padding(
+//                   padding: EdgeInsets.only(top: 20),
+//                   child: Text(
+//                     "Enter 6 digit verification code sent on ",
+//                     style: TextStyle(fontSize: 16),
+//                   ),
+//                 ),
+//                 const Padding(
+//                   padding: EdgeInsets.only(top: 10),
+//                   child: Text(
+//                     "your mobile number ",
+//                     style: TextStyle(fontSize: 16),
+//                   ),
+//                 ),
+//                 const Padding(
+//                   padding: EdgeInsets.only(top: 20),
+//                 ),
+//                 OtpTextField(
+//                   numberOfFields: 6,
+//                   borderColor: Colors.black,
+//                   //set to true to show as box or false to show as dash
+//                   showFieldAsBox: true,
+//                   //runs when a code is typed in
+//                   onCodeChanged: (String code) {
+//                     setState(() {
+//                       otpController.text = code;
+//
+//                     });
+//                     //handle validation or checks here
+//                   },
+//                   //runs when every textfield is filled
+//                   onSubmit: (String verificationCode){
+//                     otpController.text = verificationCode;
+//                     if(otpController.text==''){
+//                       setState(() {
+//                         _isLoading = false;
+//                       });
+//                     }
+//                   }, // end onSubmit
+//                 ),
+//
+//                 const Padding(
+//                   padding: EdgeInsets.only(bottom: 20),
+//                 ),
+//               ],
+//             ),
+//           ),
+//           visible: otpVisibility,
+//         ),
+//         const SizedBox(
+//           height: 30,
+//         ),
+//         _isLoading
+//             ? const Center(
+//             child: CircularProgressIndicator(
+//               color: Colors.blue,
+//               backgroundColor: Colors.white,
+//             ))
+//             : ElevatedButton(
+//           style: ElevatedButton.styleFrom(
+//             fixedSize: const Size(200, 50),
+//             primary: Colors.blueAccent,
+//             textStyle: const TextStyle(
+//                 fontSize: 20, fontWeight: FontWeight.bold),
+//           ),
+//           onPressed: () {
+//             final isValidForm = _Key.currentState!.validate();
+//
+//             if (isValidForm) {
+//               loginWithPhone();
+//               setState(() {
+//                 _isLoading = true;
+//               });
+//             }
+//             if (otpVisibility) {
+//               verifyOTP();
+//               if(otpController.text!=''){
+//                 setState(() {
+//                   _isLoading = true;
+//                 });
+//               }
+//             }
+//           },
+//           child: Text(
+//             otpVisibility ? "Verify" : "Login",
+//             style: const TextStyle(
+//               color: Colors.white,
+//               fontSize: 20,
+//             ),
+//           ),
+//         ),
+//       ],
+//     ),
+//   ),
+// )
