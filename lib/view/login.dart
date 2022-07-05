@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -30,130 +31,136 @@ class _LoginScreenState extends State<LoginScreen> {
   User? user;
   String verificationID = "";
   bool _isLoading = false;
+  bool verified=false;
   final _Key = GlobalKey<FormState>();
-
+  int? _resendToken;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
           //  backgroundColor:Colors.blueAccent ,
           // appBar: Header("Login"),
-          body: Stack(
-        children: [
-          Visibility(
-            visible: !otpVisibility,
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.4,
-              width: MediaQuery.of(context).size.width,
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(80),
-                      bottomRight: Radius.circular(80),
-                    )),
-                child: Column(
-                  children: [
-                    Visibility(
-                        visible: !otpVisibility,
-                        child: const Align(
-                          alignment: Alignment.topLeft,
-                          child: Padding(
-                            padding: EdgeInsets.only(
-                                top: 20.0, bottom: 10, left: 20),
-                            child: Text('Login ',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25.0,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                        )),
-                    Visibility(
-                      visible: !otpVisibility,
-                      child: Padding(
-                          padding: const EdgeInsets.only(top: 10.0),
-                          child: Center(
-                            child: Image.asset(ImageResource.user,
-                                height: 130, width: 130),
+          body: SingleChildScrollView(
+            child:Stack(
+              children: [
+                Visibility(
+                  visible: !otpVisibility,
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    width: MediaQuery.of(context).size.width,
+                    child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.blueAccent,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(50),
+                            bottomRight: Radius.circular(50),
                           )),
-                    ),
-                    Visibility(
-                      visible: !otpVisibility,
-                      child: const Padding(
-                          padding: EdgeInsets.only(top: 10.0, bottom: 10),
-                          child: Center(
-                            child: Text('Pagar Application ',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 25.0,
-                                    fontWeight: FontWeight.bold)),
-                          )),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(
-                top: MediaQuery.of(context).size.width * 0.7,
-
-                left: 25,
-                right: 25),
-            height: 200.0,
-            width: MediaQuery.of(context).size.width,
-            child: Card(
-              color: Colors.white,
-              elevation: 4.0,
-              child: Form(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                key: _Key,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 20, right: 20,top: 10),
-                      child: Visibility(
-                        visible: !otpVisibility,
-                        child: TextFormField(
-                          controller: phoneController,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: 'Phone Number',
-                            prefix: Padding(
-                              padding: EdgeInsets.all(4),
-                              child: Text('+91'),
-                            ),
+                      child: Column(
+                        children: [
+                          Visibility(
+                              visible: !otpVisibility,
+                              child: const Align(
+                                alignment: Alignment.topLeft,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 20.0, bottom: 10, left: 20),
+                                  child: Text('Login ',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25.0,
+                                          fontWeight: FontWeight.bold)),
+                                ),
+                              )),
+                          Visibility(
+                            visible: !otpVisibility,
+                            child: Padding(
+                                padding: const EdgeInsets.only(top: 10.0),
+                                child: Center(
+                                  child: Image.asset(ImageResource.user,
+                                      height: 130, width: 130),
+                                )),
                           ),
-                          maxLength: 10,
-                          keyboardType: TextInputType.phone,
-                          validator: (value) {
-                            if (value != null && value.isEmpty) {
-                              return "This field is required";
-                            }
-                            if (value!.length < 10) {
-                              return "Please enter a 10 digit valid phone number";
-                            }
-                            return null;
-                          },
-                        ),
+                          Visibility(
+                            visible: !otpVisibility,
+                            child: const Padding(
+                                padding: EdgeInsets.only(top: 10.0, bottom: 10),
+                                child: Center(
+                                  child: Text('Pagar  ',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25.0,
+                                          fontWeight: FontWeight.bold)),
+                                )),
+                          ),
+                        ],
                       ),
                     ),
-                  Visibility(
-                    visible: otpVisibility,
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.width * 0.7,
 
-                    child:   const SizedBox(
-                    height: 80,
-                  ),),
-                    _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                            color: Colors.blue,
-                            backgroundColor: Colors.white,
-                          ))
-                        : ElevatedButton(
+                      left: 25,
+                      right: 25),
+                  height: 200.0,
+                  width: MediaQuery.of(context).size.width,
+                  child: Card(
+                    color: Colors.white,
+                    elevation: 4.0,
+                    child: Form(
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      key: _Key,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            margin: EdgeInsets.only(left: 20, right: 20,top: 10),
+                            child: Visibility(
+                              visible: !otpVisibility,
+                              child: TextFormField(
+                                controller: phoneController,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  hintText: 'Phone Number',
+                                  prefix: Padding(
+                                    padding: EdgeInsets.all(2),
+                                    child: Text('+91'),
+
+                                  ),
+
+                                  // prefixText: "+91",
+                                ),
+                                //autofocus: true,
+                                maxLength: 10,
+                                keyboardType: TextInputType.phone,
+                                validator: (value) {
+                                  if (value != null && value.isEmpty) {
+                                    return "This field is required";
+                                  }
+                                  if (value!.length < 10) {
+                                    return "Please enter a 10 digit valid phone number";
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: otpVisibility,
+
+                            child:   const SizedBox(
+                              height: 80,
+                            ),),
+                          _isLoading
+                              ? const Center(
+                              child: CircularProgressIndicator(
+                                color: Colors.blue,
+                                backgroundColor: Colors.white,
+                              ))
+                              : ElevatedButton(
                             style: !otpVisibility? ElevatedButton.styleFrom(
-                                //otpVisibility?  fixedSize: const Size(200, 50) :  fixedSize: const Size(200, 50),
+                              //otpVisibility?  fixedSize: const Size(200, 50) :  fixedSize: const Size(200, 50),
                               fixedSize: const Size(120, 40),
                               primary: Colors.blueAccent,
                               textStyle: const TextStyle(
@@ -193,102 +200,104 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             ),
                           ),
-                    // const SizedBox(
-                    //   child: Padding(padding: EdgeInsets.only(bottom: 10)),
-                    // ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Visibility(
-            child: Visibility(
-              child: Center(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 10, bottom: 5,top: 25),
-                      child: Image.asset(
-                        'assets/images/security.png',
-                        height: 100,
-                        width: 100,
+                          // const SizedBox(
+                          //   child: Padding(padding: EdgeInsets.only(bottom: 10)),
+                          // ),
+                        ],
                       ),
                     ),
-                    const Padding(
-                      padding: EdgeInsets.only(
-                        top: 25,
-                      ),
-                      child: Text(
-                        "Verification Code",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 22),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10),
-                      child: Text(
-                        "Enter 6 digit verification code sent on ",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 10,),
-                      child: Text(
-                        "your mobile number ",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 30),
-                    ),
-                    OtpTextField(
-                      numberOfFields: 6,
-                      borderColor: Colors.black,
-                      //set to true to show as box or false to show as dash
-                      showFieldAsBox: true,
-                      //runs when a code is typed in
-                      onCodeChanged: (String code) {
-                        setState(() {
-                          otpController.text = code;
-                        });
-                        //handle validation or checks here
-                      },
-                      //runs when every textfield is filled
-                      onSubmit: (String verificationCode) {
-                        otpController.text = verificationCode;
-                        if (otpController.text == '') {
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        }
-                      }, // end onSubmit
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(bottom: 10),
-                    ),
-                  ],
-                ),
-              ),
-              visible: otpVisibility,
-            ),
-          ),
-          Visibility(
-            visible: !otpVisibility,
-            child: Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.width * 1.4, bottom: 10),
-                // child: Image.asset('assets/images/att.png',
-                child: ClipRRect(
-                  child: ImageFiltered(
-                    imageFilter: ImageFilter.blur(sigmaX: 0.8, sigmaY: 0.8),
-                    child: Image.asset('assets/images/att.png'),
                   ),
                 ),
-                width: MediaQuery.of(context).size.width * 1.5,
-                height: 250),
-          )
-        ],
-      )
+                Visibility(
+                  child: Visibility(
+                    child: Center(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 10, bottom: 5,top: 25),
+                            child: Image.asset(
+                              'assets/images/security.png',
+                              height: 100,
+                              width: 100,
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(
+                              top: 25,
+                            ),
+                            child: Text(
+                              "Verification Code",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              "Enter 6 digit verification code sent on ",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 10,),
+                            child: Text(
+                              "your mobile number ",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 30),
+                          ),
+                          OtpTextField(
+                            numberOfFields: 6,
+                            borderColor: Colors.black,
+                            //set to true to show as box or false to show as dash
+                            showFieldAsBox: true,
+                            //runs when a code is typed in
+                            onCodeChanged: (String code) {
+                              setState(() {
+                                otpController.text = code;
+                              });
+                              //handle validation or checks here
+                            },
+                            //runs when every textfield is filled
+                            onSubmit: (String verificationCode) {
+                              otpController.text = verificationCode;
+                              if (otpController.text == '') {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }, // end onSubmit
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(bottom: 10),
+                          ),
+                        ],
+                      ),
+                    ),
+                    visible: otpVisibility,
+                  ),
+                ),
+                Visibility(
+                  visible: !otpVisibility,
+                  child: Container(
+                      margin: EdgeInsets.only(
+                          top: MediaQuery.of(context).size.width * 1.4, bottom: 10),
+                      // child: Image.asset('assets/images/att.png',
+                      child: ClipRRect(
+                        child: ImageFiltered(
+                          imageFilter: ImageFilter.blur(sigmaX: 0.8, sigmaY: 0.8),
+                          child: Image.asset('assets/images/att.png'),
+                        ),
+                      ),
+                      width: MediaQuery.of(context).size.width * 1.5,
+                      height: 250),
+                )
+              ],
+            ),
+          ),
+
 
 
           ),
@@ -299,26 +308,55 @@ class _LoginScreenState extends State<LoginScreen> {
     auth.verifyPhoneNumber(
       phoneNumber: "+91" + phoneController.text,
       verificationCompleted: (PhoneAuthCredential credential) async {
-        await auth.signInWithCredential(credential).then((value) {
-          print("You are logged in successfully");
-        });
+        print('verifycalled');
+        print("verify");
+        // Sign the user in (or link) with the auto-generated credential
+        //await auth.signInWithCredential(credential);
+
+        // await auth.signInWithCredential(credential).then((value) {
+        //   print("You are logged in successfully");
+        // });
         setState(() {
           _isLoading = false;
+          verified=true;
         });
+
       },
       verificationFailed: (FirebaseAuthException e) {
+        print('failcalled');
+        print("fail");
         print(e.message);
         setState(() {
           _isLoading = false;
         });
       },
       codeSent: (String verificationId, int? resendToken) {
+        print('codesentcalled');
+        print("codesent");
         otpVisibility = true;
         verificationID = verificationId;
+      //  _resendToken = resendToken;
+   //delay
+   //      Timer(Duration(seconds: 2), ()=>{
+   //        if(verified==false){
+   //        otpVisibility = true,
+   //        verificationID = verificationId,
+   //        _resendToken = resendToken,
+   //        }else{
+   //          Navigator.pushAndRemoveUntil(
+   //            context,
+   //            MaterialPageRoute(builder: (context) => Home()),
+   //                (Route<dynamic> route) => false,
+   //          ),
+   //      }
+   //      });
+
         setState(() {
           _isLoading = false;
         });
       },
+     // timeout: Duration(seconds: 80),
+    //  forceResendingToken: _resendToken,
       codeAutoRetrievalTimeout: (String verificationId) {
         setState(() {
           _isLoading = false;
@@ -330,11 +368,20 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
   }
-
+  // Future<void> _signOut() async {
+  //   await FirebaseAuth.instance.signOut();
+  // }
   void verifyOTP() async {
+    if (user != null){
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => Home()),
+            (Route<dynamic> route) => false,
+      );
+    }
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
         verificationId: verificationID, smsCode: otpController.text);
-
+print(otpController.text);
     if (otpController.text != '') {
       setState(() {
         _isLoading = true;
